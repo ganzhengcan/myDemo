@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Page Title</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="./node_modules/three/examples/js/libs/stats.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+    }
+
+    html,
+    body {
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <script type="module">
+    import * as THREE from './node_modules/three/build/three.module.js';
+    import { FBXLoader } from './node_modules/three/examples/jsm/loaders/FBXLoader.js';
+    import { STLLoader } from './node_modules/three/examples/jsm/loaders/STLLoader.js';
+
+    class Dome {
+      constructor() {
+        this.scene = new THREE.Scene();
+        this.pointsSystems = [];
+        this.pointsSystemsSetting = [];
+        window.addEventListener('resize', this.windowResize.bind(this));
+      }
+      init() {
+        this.initRenderer();
+        this.initCamera();
+        this.initStats();
+        this.setLight();
+        this.initGroup();
+        this.initClock();
+
+        this.initMesh();
+
+        this.animate();
+      }
+      initRenderer() {
+        this.renderer = new THREE.WebGLRenderer({antialias: true});
+        this.renderer.setSize(innerWidth, innerHeight);
+        document.body.appendChild(this.renderer.domElement);
+      }
+      initCamera() {
+        this.camera = new THREE.PerspectiveCamera(70, innerWidth/innerHeight, 1, 10000);
+        // this.camera.position.x = 100;
+        this.camera.position.y = -300;
+        this.camera.position.z = 100;
+        this.camera.lookAt(this.scene.position);
+        this.scene.add(this.camera);
+      }
+      initStats() {
+        this.stats = new Stats();
+        this.stats.domElement.style.position = 'absolute';
+        this.stats.domElement.style.top = 0;
+        this.stats.domElement.style.left = 0;
+        document.body.appendChild(this.stats.domElement);
+      }
+      initClock() {
+        this.clock = new THREE.Clock();
+      }
+      setLight() {
+        const light = new THREE.DirectionalLight(0xffffff, 1);
+        light.position.set(1, -1, 1);
+        this.scene.add(light)
+      }
+      animate() {
+        this.render();
+        requestAnimationFrame(this.animate.bind(this));
+      }
+      initGroup() {
+        this.group = new THREE.Group();
+        this.scene.add(this.group);
+      }
+      initMesh() {
+        const axisHelper = new THREE.AxesHelper(50);
+        this.scene.add(axisHelper);
+        this.setPlanePoints();
+        this.loaderModule();
+      }
+      setPlanePoints() {
+        const planeGeometry = new THREE.PlaneBufferGeometry(1000, 700, 50, 50);
+        const material = new THREE.PointsMaterial({ color: 0xff0000, size: 3 });
+        this.planePoints = new THREE.Points(planeGeometry, material);
+        // this.planePoints.rotateX(Math.PI / 2);
+        this.planePoints.position.y = -50;
+        this.group.add(this.planePoints);
+      }
+      loaderModule() {
+        const manager = new THREE.LoadingManager();
+        const fbxLoader = new FBXLoader();
+        const stlLoader = new STLLoader();
+        // const material = new THREE.MeshBasicMaterial({color: 0xffffff, wireframe: true});
+        // const material = new THREE.MeshLambertMaterial({color: 0xffffff, wireframe: true});
+        fbxLoader.load('./3dModules/file.fbx', geometry => {
+          const loadegeometry = geometry.children[0].geometry;
+          this.initPointsSystem(loadegeometry)
+        })
+      }
+      initPointsSystem(loadegeometry) {
+        
+
+        // 多个粒子系统位置
+        const multiPointsSystemPosition = [
+          [100, 100, 0],
+          [-100, 100, 0],
+          [100, -100, 0],
+          [-100, -100, 0],
+          [0, 0, 0],
+        ] 
+        multiPointsSystemPosition.forEach(item => {
+          const vertices_tmp = []; // 记录原点的位置
+          const cloneGeometry = new THREE.Geometry();
+          const { array, itemSize } = loadegeometry.attributes.position;
+          const len = array.length;
+          for (let i = 0; i < len; i += 3) {
+            const array0 = array[i];
+            const array1 = array[i + 1];
+            const array2 = array[i + 2];
+            const vector = new THREE.Vector3(array0, array1, array2)
+            vertices_tmp.push([array0, array1, array2, 0, 0]);
+            cloneGeometry.vertices.push(vector);
+          }
+          const material = new THREE.PointsMaterial({color: (Math.random() * .5 + .5) * 0xffffff, size: 1});
+          const pointsSystem = new THREE.Points(cloneGeometry, material);
+          pointsSystem.position.x = item[0];
+          pointsSystem.position.y = item[1];
+          pointsSystem.position.z = item[2];
+          this.group.add(pointsSystem);
+          this.pointsSystems.push(pointsSystem);
+          this.pointsSystemsSetting.push({
+            totalNumber: len / 3,
+            down: true,
+            up: false,
+            delay: Math.random() * 300 + 200,
+            vertices_tmp,
+          })
+        });
+      }
+      setDown(verticesItem, currentDoneNumber) {
+        const { x, y, z } = verticesItem;
+        if (z > 0) {
+          verticesItem.x = Math.random() * 4 - 2 + x;
+          verticesItem.y = Math.random() * 4 - 2 + y;
+          verticesItem.z = Math.random() * 1 - 2 + z;
+        } else {
+          currentDoneNumber ++;
+        }
+        return currentDoneNumber;
+      }
+      setUp(verticesItem, currentDoneNumber, index, vertices_tmp) {
+        const v_tmp_x = vertices_tmp[index][0];
+        const v_tmp_y = vertices_tmp[index][1];
+        const v_tmp_z = vertices_tmp[index][2];
+        const { x, y, z } = verticesItem;
+        const d = Math.sqrt(Math.pow(x - v_tmp_x, 2) + Math.pow(y - v_tmp_y, 2) + Math.pow(z - v_tmp_z, 2));
+        if (d > .5) {
+          verticesItem.x = v_tmp_x > x ? x + Math.random() : x - Math.random();
+          verticesItem.y = v_tmp_y > y ? y + Math.random() : y - Math.random();
+          verticesItem.z = v_tmp_z > z ? z + Math.random() : z - Math.random();
+        } else {
+          currentDoneNumber ++;
+        }
+        return currentDoneNumber;
+      }
+      setPointAnimate(obj) {
+        this.pointsSystems.forEach((item, index) => {
+          const { vertices } = item.geometry;
+          const pointsSystemsSetting = this.pointsSystemsSetting[index]
+          const { down, up, delay, totalNumber, vertices_tmp} = pointsSystemsSetting;
+          let currentDoneNumber = 0;
+          if (delay > 0) {
+            pointsSystemsSetting.delay --;
+          } else {
+            if (down) {
+              vertices.forEach(verticesItem => {
+                currentDoneNumber = this.setDown(verticesItem, currentDoneNumber);
+              })
+              this.pointsSystems[index].geometry.verticesNeedUpdate = true;
+            }
+            if (up) {
+              vertices.forEach((verticesItem, index) => {
+                currentDoneNumber = this.setUp(verticesItem, currentDoneNumber, index, vertices_tmp);
+              })
+              this.pointsSystems[index].geometry.verticesNeedUpdate = true;
+            }
+            if (currentDoneNumber >= totalNumber) {
+              console.log(`${pointsSystemsSetting.down ? 'down' : 'up'} 已经完成`);
+              pointsSystemsSetting.delay = Math.random() * 300 + 200,
+              pointsSystemsSetting.down = !pointsSystemsSetting.down;
+              pointsSystemsSetting.up = !pointsSystemsSetting.up;
+            }
+          }
+        })
+        
+      }
+
+      render() {
+        if (this.pointsSystems.length) {
+          this.setPointAnimate();
+        }
+        this.group.rotation.z += 0.002
+        this.stats.update();
+        this.renderer.render(this.scene, this.camera);
+      }
+      windowResize() {
+        this.camera.aspect = innerWidth / innerHeight;
+        this.camera.updateProjectionMatrix();
+        this.renderer.setSize(innerWidth, innerHeight);
+      }
+    }
+
+    const dome = new Dome();
+    dome.init();
+  </script>
+</body>
+
+</html>
