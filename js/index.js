@@ -1,5 +1,5 @@
-import * as THREE from '../node_modules/three/build/three.module.js';
-import { OrbitControls } from '../node_modules/three/examples/jsm/controls/OrbitControls.js';
+import * as THREE from '../js/three/build/three.module.js';
+import { OrbitControls } from '../js/three/examples/jsm/controls/OrbitControls.js';
 import THREEx from "../geometricglow/threex.js";
 import {data, lineSphereData} from './data.js';
 
