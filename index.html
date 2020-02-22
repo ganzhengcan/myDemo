@@ -5,11 +5,56 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+    }
+    body {
+      padding: 10px;
+    }
+    .list {
+      display: flex;
+      flex-direction: column;
+      list-style: none;
+    }
+    .link-item {
+      height: 40px;
+      width: 120px;
+      border: 1px solid #000;
+      border-bottom: none; 
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-decoration: none;
+      color: #333;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+    .link-item:last-of-type{
+      border-bottom: 1px solid #000;
+    }
+    .link-item:hover {
+      background: #b3ddf1;
+      color: #2d8cf0;
+    }
+
+
+  </style>
 </head>
 <body>
-  <div class="list">
-    <a href="https://ganzhengcan.github.io/myDemo/points.html">points</a>
-    <a href="https://ganzhengcan.github.io/myDemo/sphere.html">sphere</a>
-  </div>
+  <ul class="list">
+    <li class="link-item" hrefLink="https://ganzhengcan.github.io/myDemo/points.html">粒子系统</li>
+    <li class="link-item" hrefLink="https://ganzhengcan.github.io/myDemo/sphere.html">原子模型</li>
+    <li class="link-item" hrefLink="https://ganzhengcan.github.io/myDemo/3dMap.html">3D地图</li>
+  </ul>
+  <script>
+    const listDom = document.getElementsByClassName('list')[0];
+    listDom.onclick = function (e) {
+      const linkItem = e.target;
+      const linkUrl = linkItem.getAttribute('hrefLink');
+      window.open(linkUrl);
+    }
+  </script>
 </body>
 </html>
