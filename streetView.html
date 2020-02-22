@@ -1,0 +1,437 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+  <title>设置地图显示要素</title>
+  <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css" />
+  <!-- <script src="https://cache.amap.com/lbs/static/es5.min.js"></script> -->
+  <script
+    src="https://webapi.amap.com/maps?v=1.4.15&key=4b6ecd31f190a3ff4a2d29b5fb67187b&plugin=Map3D,AMap.DistrictSearch">
+  </script>
+  <script src="./杭州地图json.js"></script>
+  </script>
+  <style>
+    html {
+      font-size: calc(100vw / 19.2);
+    }
+
+    html,
+    body,
+    #container {
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+    }
+
+    #map-features .input-item {
+      height: 2rem;
+    }
+
+    .amap-marker-label {
+      border: 0;
+      background-color: transparent;
+    }
+
+    .marker-label {
+      background: #fff;
+      padding: 10px;
+      border-radius: 3px;
+      box-shadow: #333 0 0 5px;
+    }
+
+    .info-box {
+      width: 2rem;
+      /* padding: .1rem 0;  */
+    }
+
+    .info-box .info-header {
+      padding: .08rem .1rem;
+      font-size: .14rem;
+      color: #fff;
+      background-color: rgba(0, 52, 100, 0.8);
+    }
+
+    .info-box .info-items {
+      padding: .1rem;
+      font-size: .12rem;
+      color: #fff;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+  </style>
+</head>
+
+<body>
+  <div id="container"></div>
+  <div id="panel"></div>
+  <script>
+    const buildings = new AMap.Buildings({
+      'zooms': [3, 18],
+      'zIndex': 10,
+      'heightFactor': 2, //2倍于默认高度，3D下有效
+      'opacity': 15,
+    });
+
+    //初始化地图
+    const map = new AMap.Map('container', {
+      pitch: 20,
+      viewMode: '3D',
+      resizeEnable: true, //是否监控地图容器尺寸变化
+      zoom: 16,
+      center: [120.20539, 30.201134],
+      showLabel: false,
+      // buildingAnimation:true,
+      rotation: 0,
+      features: ['bg', 'road', 'point'], //隐藏默认楼块
+      mapStyle: 'amap://styles/light',
+      layers: [
+        new AMap.TileLayer(), //高德默认标准图层
+        buildings
+      ],
+      mapStyle: 'amap://styles/grey',
+    });
+    buildings.on('click', (event) => {
+      console.log(event)
+    })
+
+    const marker = new AMap.Marker({
+      position: new AMap.LngLat(120.20639, 30.201634),
+      title: '一个点标记',
+      draggable: true,
+      extData: {
+        name: '杭州'
+      },
+      label: {
+        content: `<div class="marker-label">一个label</div>`,
+        direction: 'top',
+        // offset: 'center'
+      }
+      // content: `<div>一个content</div>`
+    });
+    map.add(marker);
+    marker.on('click', (event) => {
+      console.log(event)
+    });
+
+    const markerIcon = new AMap.Marker({
+      position: new AMap.LngLat(120.20639, 30.201634),
+      icon: './images/洋山-外高桥箭头-前端_00000_iSpt.png',
+    });
+    map.add(markerIcon);
+
+    // 3d布局
+    const object3DLayer = new AMap.Object3DLayer({
+      zIndex: 110,
+      opacity: 1,
+    });
+    map.add(object3DLayer);
+
+    // 点和线的位置
+    const height = -2000
+    const lnglat1 = map.lngLatToGeodeticCoord([120.20539, 30.205634]);
+    const lnglat2 = map.lngLatToGeodeticCoord([120.20039, 30.200634]);
+
+    // 创建线
+    const lines = new AMap.Object3D.Line();
+    const lineGeo = lines.geometry;
+    lineGeo.vertices.push(lnglat1.x, lnglat1.y, 0);
+    lineGeo.vertexColors.push(0, 1, 1, 1);
+    lineGeo.vertices.push(lnglat1.x, lnglat1.y, height);
+    lineGeo.vertexColors.push(0, 1, 1, 1);
+
+    lineGeo.vertices.push(lnglat2.x, lnglat2.y, 0);
+    lineGeo.vertexColors.push(0, 1, 1, 1);
+    lineGeo.vertices.push(lnglat2.x, lnglat2.y, height);
+    lineGeo.vertexColors.push(0, 1, 1, 1);
+
+    // 创建点
+    const pointers = new AMap.Object3D.RoundPoints();
+    const pointersGeo = pointers.geometry;
+    pointersGeo.vertices.push(lnglat1.x, lnglat1.y, 0);
+    pointersGeo.pointSizes.push(10);
+    pointersGeo.vertexColors.push(0, 1, .4, 1);
+
+    pointersGeo.vertices.push(lnglat1.x, lnglat1.y, height);
+    pointersGeo.pointSizes.push(20)
+    pointersGeo.vertexColors.push(.5, 1, 1, 1);
+
+    pointersGeo.vertices.push(lnglat2.x, lnglat2.y, 0);
+    pointersGeo.pointSizes.push(10);
+    pointersGeo.vertexColors.push(0, 1, .4, 1);
+
+    pointersGeo.vertices.push(lnglat2.x, lnglat2.y, height);
+    pointersGeo.pointSizes.push(20)
+    pointersGeo.vertexColors.push(.5, 1, 1, 1);
+
+    // 将点和线加如3d场景中
+    object3DLayer.add(lines);
+    object3DLayer.add(pointers);
+
+    // 创建信息窗口
+    const infoWindow = new AMap.InfoWindow({
+      isCustom: true,
+      content: `<div class="info-box">
+                  <div class="info-header">浙江省卫建委</div>
+                  <div class="info-items">
+                    <div class="info-item">
+                      <span class="info-label">处置通报</span>
+                      <span class="info-value">55</span>
+                    </div>
+                    <div class="info-item">
+                      <span class="info-label">本日已处理</span>
+                      <span class="info-value">33</span>
+                    </div>
+                    <div class="info-item">
+                      <span class="info-label">在线资产</span>
+                      <span class="info-value">1213</span>
+                    </div>
+                    <div class="info-item">
+                      <span class="info-label">风险资产</span>
+                      <span class="info-value">13</span>
+                    </div>
+                  </div>
+                </div>`,
+      position: new AMap.LngLat(120.20639, 30.201634),
+      anchor: 'top-left'
+    })
+    infoWindow.open(map);
+
+    const path1 = [{
+      "P": 30.205464,
+      "Q": 120.20545600000003,
+      "lng": 120.205456,
+      "lat": 30.205464
+    }, {
+      "P": 30.205221,
+      "Q": 120.205647,
+      "lng": 120.205647,
+      "lat": 30.205221
+    }, {
+      "P": 30.205221,
+      "Q": 120.205647,
+      "lng": 120.205647,
+      "lat": 30.205221
+    }, {
+      "P": 30.20503,
+      "Q": 120.20578599999999,
+      "lng": 120.205786,
+      "lat": 30.20503
+    }, {
+      "P": 30.20503,
+      "Q": 120.20578599999999,
+      "lng": 120.205786,
+      "lat": 30.20503
+    }, {
+      "P": 30.204805,
+      "Q": 120.205938,
+      "lng": 120.205938,
+      "lat": 30.204805
+    }, {
+      "P": 30.204805,
+      "Q": 120.205938,
+      "lng": 120.205938,
+      "lat": 30.204805
+    }, {
+      "P": 30.204761,
+      "Q": 120.20597700000002,
+      "lng": 120.205977,
+      "lat": 30.204761
+    }, {
+      "P": 30.204761,
+      "Q": 120.20597700000002,
+      "lng": 120.205977,
+      "lat": 30.204761
+    }, {
+      "P": 30.204701,
+      "Q": 120.206029,
+      "lng": 120.206029,
+      "lat": 30.204701
+    }, {
+      "P": 30.204696,
+      "Q": 120.206029,
+      "lng": 120.206029,
+      "lat": 30.204696
+    }, {
+      "P": 30.204236,
+      "Q": 120.20513499999998,
+      "lng": 120.205135,
+      "lat": 30.204236
+    }, {
+      "P": 30.204236,
+      "Q": 120.20513499999998,
+      "lng": 120.205135,
+      "lat": 30.204236
+    }, {
+      "P": 30.203759,
+      "Q": 120.20421899999997,
+      "lng": 120.204219,
+      "lat": 30.203759
+    }, {
+      "P": 30.203754,
+      "Q": 120.20421399999998,
+      "lng": 120.204214,
+      "lat": 30.203754
+    }, {
+      "P": 30.203255,
+      "Q": 120.20454899999999,
+      "lng": 120.204549,
+      "lat": 30.203255
+    }, {
+      "P": 30.203255,
+      "Q": 120.20454899999999,
+      "lng": 120.204549,
+      "lat": 30.203255
+    }, {
+      "P": 30.203043,
+      "Q": 120.20468800000003,
+      "lng": 120.204688,
+      "lat": 30.203043
+    }, {
+      "P": 30.202648,
+      "Q": 120.20490899999999,
+      "lng": 120.204909,
+      "lat": 30.202648
+    }, {
+      "P": 30.202643,
+      "Q": 120.20490899999999,
+      "lng": 120.204909,
+      "lat": 30.202643
+    }, {
+      "P": 30.202205,
+      "Q": 120.20407999999998,
+      "lng": 120.20408,
+      "lat": 30.202205
+    }, {
+      "P": 30.201849,
+      "Q": 120.20352400000002,
+      "lng": 120.203524,
+      "lat": 30.201849
+    }, {
+      "P": 30.20151,
+      "Q": 120.20316400000002,
+      "lng": 120.203164,
+      "lat": 30.20151
+    }, {
+      "P": 30.201319,
+      "Q": 120.20290799999998,
+      "lng": 120.202908,
+      "lat": 30.201319
+    }, {
+      "P": 30.200773,
+      "Q": 120.20179300000001,
+      "lng": 120.201793,
+      "lat": 30.200773
+    }, {
+      "P": 30.200464,
+      "Q": 120.20112,
+      "lng": 120.20112,
+      "lat": 30.200464
+    }, {
+      "P": 30.200464,
+      "Q": 120.20112,
+      "lng": 120.20112,
+      "lat": 30.200464
+    }, {
+      "P": 30.200417,
+      "Q": 120.20099800000003,
+      "lng": 120.200998,
+      "lat": 30.200417
+    }]
+    const path = path1.map(item => new AMap.LngLat(item.lng, item.lat))
+
+    // 创建轨迹线（细线）
+    const thinLines = new AMap.Object3D.ThinLine({
+      path,
+      color: 'rgba(55,129,240, .2)'
+    });
+
+    const meshLine = new AMap.Object3D.MeshLine({
+      path: path.filter((item, index) => index >= 0 && index < 10),
+      color: '#f00',
+      width: 4
+    });
+    const len = path.length;
+    let lineIndex = 10;
+    const speed = 5;
+    let speedOn = speed;
+
+    function lineAnimate() {
+      if (1 / speedOn >= 1) {
+        speedOn = speed;
+        if (lineIndex > len) {
+          lineIndex = 10
+        }
+        meshLine.setPath(path.filter((item, index) => index >= (lineIndex - 10) && index < lineIndex))
+        lineIndex++
+      } else {
+        speedOn--;
+      }
+    }
+
+    object3DLayer.add(thinLines);
+    object3DLayer.add(meshLine);
+
+    // 杭州市地图路径
+    const ditiePathl = ditiePath.l;
+    const pathDts = ditiePathl.map(item => {
+      const st = item.st;
+      const d = st.map(stItem => {
+        const slArr = stItem.sl.split(',');
+        return new AMap.LngLat(slArr[0], slArr[1]);
+      })
+      return new AMap.Object3D.ThinLine({
+        path: d,
+        color: 'rgba(55,129,240, .2)'
+      });
+    });
+    pathDts.forEach(item => {
+      object3DLayer.add(item);
+    });
+
+    // 添加Canvas图层（跳动的圆）
+    const canvas = document.createElement('canvas');
+    canvas.width = canvas.height = 200;
+
+    const ctx = canvas.getContext('2d')
+    ctx.fillStyle = 'rgb(0,100,255)';
+    ctx.strokeStyle = 'white';
+    ctx.globalAlpha = 1;
+    ctx.lineWidth = 2;
+
+    let radious = 0;
+    function draw() {
+      ctx.clearRect(0, 0, 200, 200)
+      ctx.globalAlpha = (ctx.globalAlpha - 0.01 + 1) % 1;
+      radious = (radious + 1) % 100;
+
+      ctx.beginPath();
+      ctx.arc(100, 100, radious, 0, 2 * Math.PI);
+      ctx.fill();
+      ctx.stroke();
+      //2D视图时可以省略
+      CanvasLayer.reFresh();
+    };
+
+
+    const CanvasLayer = new AMap.CanvasLayer({
+      map,
+      canvas: canvas,
+      bounds: new AMap.Bounds(
+        [120.20339, 30.203634],
+        [120.20739, 30.207634]
+      ),
+      zooms: [3, 18],
+    });
+
+    function animate(params) {
+      draw();
+      lineAnimate();
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
+</body>
+
+</html>
