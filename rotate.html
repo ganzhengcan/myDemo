@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+    }
+    html, body {
+      height: 100%;
+      width: 100%;
+      background: #000;
+      position: relative;
+    }
+    .box {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      margin: -300px;
+      height: 600px;
+      width: 600px;
+      
+    }
+    .box-border {
+      color: #fff;
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 600px;
+      width: 600px;
+      perspective: 800px;
+      perspective-origin: 50% 50%;
+    }
+    .box-border-item {
+      height: 100%;
+      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 50%;
+      transform: rotateX(77deg);
+    }
+    .items {
+      position: absolute;
+      top: 38%;
+      left: 46%;
+      perspective: 800px;
+      perspective-origin: 0% 50%;
+    }
+    .item {
+      position: absolute;
+      height: 50px;
+      width: 50px;
+      background: red;
+      word-wrap: break-word;
+      perspective: 500px;
+      transition: transform 1s linear;
+      transform-style: preserve-3d;
+    }
+    .item-inner {
+    }
+    @keyframes rotateBox {
+      from {
+        transform: rotateZ(0deg)
+      }
+      to{
+        transform: rotateZ(360deg)
+      }
+    }
+  </style>
+<body>
+  <div class="box">
+    <div class="box-border">
+      <div class="box-border-item"></div>
+    </div>
+    <div class="items">
+        <div class="item">123433</div>
+        <div class="item">123433</div>
+        <div class="item">123433</div>
+        <div class="item">123433</div>
+        <div class="item">123433</div>
+        <div class="item">123433</div>
+        <div class="item">123433</div>
+        <div class="item">123433</div>
+        <div class="item">123433</div>
+        <div class="item">123433</div>
+        <div class="item">123433</div>
+        <div class="item">123433</div>
+        <div class="item">123433</div>
+        <div class="item">123433</div>
+        <div class="item">123433</div>
+        <div class="item">123433</div>
+        <div class="item">123433</div>
+        <div class="item">123433</div>
+        <div class="item">123433</div>
+        <div class="item">123433</div>
+    </div>
+  </div>
+  <script>
+    var items = document.getElementsByClassName('item')
+    var len = items.length
+    for(let i = 0; i < len; i++) {
+      let r = 300
+      let angleItem = (2 * Math.PI / len) * i
+      let angle =  Math.PI / 20
+      let x = r * Math.sin(angleItem)
+      let y = - r * Math.sin(angle) * Math.cos(angleItem)
+      let z = - r * Math.cos(angle) * Math.cos(angleItem)
+      items[i].style.transform = "translateX("+x+"px) translateY("+y+"px) translateZ("+z+"px)";
+    }
+    var index = 1
+    setTimeout(() => {
+      var timer = setInterval(() => {
+        var addAngle =  Math.PI / 120 * index
+        index ++ 
+        if(addAngle >= 2 * Math.PI) {
+          index = 1
+        }
+        for(let i = 0; i < len; i++) {
+          let r = 300
+          let angleItem = (2 * Math.PI / len) * i + addAngle
+          let angle =  Math.PI / 20
+          let x = r * Math.sin(angleItem)
+          let y = - r * Math.sin(angle) * Math.cos(angleItem)
+          let z = - r * Math.cos(angle) * Math.cos(angleItem)
+          items[i].style.transform = "translateX("+x+"px) translateY("+y+"px) translateZ("+z+"px)";
+        }
+      },1000)
+    }, 2000);
+    
+  </script>
+
+</body>
+</html>

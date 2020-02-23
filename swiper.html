@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Page Title</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" type="text/css" media="screen" href="./js/swiper/css/swiper.min.css" />
+</head>
+<style>
+  /* 每块内容的标题和边框 */
+
+  .no_data {
+    color: #e4e5e5;
+    font-size: .2rem;
+    width: 100%;
+    height: 100%;
+    display: none;
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+
+  .no_data .no-data-text {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .item {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .item_header {
+    height: 7%;
+    display: flex;
+    justify-content: space-between;
+    position: absolute;
+    left: .8rem;
+    top: .1rem;
+  }
+
+  .item_header .item_header_left {
+    height: 100%;
+    display: flex;
+    align-items: center;
+  }
+
+  .item_header_left .item_header_img {
+    width: .37rem;
+    height: .14rem;
+  }
+
+  .item_header_img>img {
+    height: 100%;
+    display: block;
+  }
+
+  .item_header_left .item_header_ctext {
+    font-size: .22rem;
+    color: #40bbcb;
+    line-height: .4rem;
+    margin-left: .1rem;
+  }
+
+  .item_section {
+    flex: 1;
+    height: 80%;
+    position: relative;
+    background: rgba(7, 15, 37, .5);
+  }
+
+  .item_section .item-content {
+    height: 100%;
+    overflow-y: scroll;
+  }
+
+  .item_border>img {
+    position: absolute;
+    height: .3rem;
+    width: .3rem;
+  }
+
+  .item_border .border_left_top {
+    left: 0;
+    top: 0;
+  }
+
+  .item_border .border_right_top {
+    right: 0;
+    top: 0;
+  }
+
+  .item_border .border_right_bottom {
+    right: 0;
+    bottom: 0;
+  }
+
+  .item_border .border_left_bottom {
+    left: 0;
+    bottom: 0;
+  }
+
+  .item_header_right {
+    position: relative;
+  }
+
+  .item_header_btn {
+    height: .3rem;
+    width: .3rem;
+    background-image: url('../images/more_btn.png');
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    font-size: .12rem;
+    color: rgb(1, 255, 255);
+    ;
+    text-align: center;
+    line-height: .3rem;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .item_header_btn .moreTitle {
+    display: none;
+    position: absolute;
+    z-index: 1100;
+    top: -0.35rem;
+    left: -0.1rem;
+    font-size: .14rem;
+    color: #000;
+    padding: 0 .1rem;
+    background: rgba(220, 220, 220, .75);
+    white-space: nowrap;
+  }
+
+  .item_header_btn .moreTitle>.ang {
+    display: block;
+    position: absolute;
+    left: 50%;
+    margin-left: -.05rem;
+    top: .29rem;
+    z-index: 1200;
+    border-left: .05rem solid transparent;
+    border-right: .05rem solid transparent;
+    border-top: .05rem solid rgba(220, 220, 220, .75);
+    border-bottom: .05rem solid transparent;
+  }
+
+  .item_header_right .item_header_btn:hover>.moreTitle {
+    display: block;
+  }
+</style>
+<style>
+  * {
+    padding: 0;
+    margin: 0;
+  }
+
+  div {
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: url('./images/background_img.png');
+    background-size: 100% auto;
+    background-repeat: no-repeat;
+  }
+
+  .box {
+    height: 600px;
+    width: 1800px;
+    border: 1px solid #000;
+    background-image: url('./images/background-01.png');
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .box-left {
+    height: 100%;
+    width: 27%;
+    display: flex;
+    align-items: center;
+  }
+
+  .swiper-box {
+    height: 85%;
+    width: 100%;
+    position: relative;
+    margin-left: .6rem; 
+  }
+
+  .swiper-box-inner {
+    height: 100%;
+    width: 100%
+  }
+
+  .slider {
+    background-image: url('./images/frame.png');
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-position: center center;
+    opacity: .3;
+  }
+
+  .slider-content {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 .5rem;
+    align-items: center;
+    font-size: .2rem;
+    color: aqua;
+  }
+
+  .slider-content-item {
+    height: 100%;
+    display: flex;
+    align-items: center;
+  }
+
+  .slider-content-index {
+    width: 10%;
+  }
+
+  .slider-content-title {
+    width: 65%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .slider-content-number {
+    width: 25%;
+  }
+
+  .swiper-slide-prev,
+  .swiper-slide-next {
+    opacity: .6;
+  }
+
+  .swiper-slide-active {
+    opacity: 1;
+  }
+
+  .active-border-box {
+    position: absolute;
+    height: 100%;
+    width: 120%;
+    top: 0;
+    left: 50%;
+    margin-left: -60%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .active-border {
+    height: 17%;
+    width: 87%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 1s;
+  }
+
+  .active-border-left,
+  .active-border-right {
+    height: 90%;
+    width: 10%;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 100% 100%;
+  }
+
+  .active-border-left {
+    background-image: url('./images/select-left.png')
+  }
+
+  .active-border-right {
+    background-image: url('./images/select-right.png')
+  }
+
+  .info-box {
+    height: 90%;
+    width: 58%;
+    background-image: url('./images/background-02.png');
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    background-position: center center;
+    position: relative;
+    margin-right: .4rem;
+  }
+
+  .rotate-box {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    margin-left: -1.7rem;
+    margin-top: -1.7rem;
+    height: 3.4rem;
+    width: 3.4rem;
+    font-size: .2rem;
+    color: #40bbcb;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .rotate-box-outer {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .rotate-box-outer-top {
+    height: 1rem;
+    width: 100%;
+    background-image: url('./images/circular-01.png');
+    background-repeat: no-repeat;
+    background-size: 75% auto;
+    background-position: center center;
+  }
+  .rotate-box-outer-bottom {
+    height: 1rem;
+    width: 100%;
+    background-image: url('./images/circular-02.png');
+    background-repeat: no-repeat;
+    background-size: 75% auto;
+    background-position: center center;
+  }
+
+  .rotate-box-inner {
+    position: absolute;
+    top: 17%;
+    left: 17%;
+    height: 66%;
+    width: 66%;
+    background-image: url('./images/circular-inner.png');
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    background-position: center center;
+    animation: borderRotate 15s linear infinite;
+  }
+
+  .rotate-box-info {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center
+  }
+  .rotate-box-info-number {
+    font-size: .4rem;
+  }
+  .rotate-box-info-title {
+    
+  }
+  .arrow-item {
+    position: absolute;
+    top: 50%;
+    margin-top: -.15rem;
+    height: .3rem;
+    width: .3rem;
+    background-image: url('./images/double-arrow.png');
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-position: center center;
+  }
+  .double-arrow-left {
+    left: -17%;
+    animation: arrowMove1 1.5s linear infinite;
+  }
+  .double-arrow-right {
+    left: 14%;
+    /* animation: arrowMove2 1.5s ease infinite; */
+  }
+
+  .info-item {
+    position: absolute;
+    height: 2.2rem;
+    width: 2.2rem;
+    background-image: url('./images/shape-default.png');
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-position: center center;
+  }
+  .info-item1 {
+    top: 1rem;
+    left: 1.7rem;
+  }
+  .info-item2 {
+    top: 2.4rem;
+    left: 3.8rem;
+  }
+  .info-item3 {
+    top: 1rem;
+    left: 5.8rem;
+  }
+  .info-item4 {
+    top: 2.4rem;
+    left: 7.8rem;
+  }
+  .active-info {
+    background-image: url('./images/shape-select.png');
+  }
+  .single-arrow {
+    position: absolute;
+    height: .3rem;
+    width: .3rem;
+    background-image: url('./images/single-arrow.png');
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-position: center center;
+  }
+  .single-arrow1 {
+    left: 3.65rem;
+    top: 2.65rem;
+    /* animation: singleArrowMove1 1.3s linear infinite ; */
+  }
+  .single-arrow2 {
+    left: 5.75rem;
+    top: 2.65rem;
+    transform: rotate(290deg);
+    /* animation: singleArrowMove2 1.3s linear infinite ; */
+  }
+  .single-arrow3 {
+    left: 7.7rem;
+    top: 2.7rem;
+    /* animation: singleArrowMove3 1.3s linear infinite ; */
+  }
+
+  @keyframes borderRotate {
+    from {
+      transform: rotateZ(0deg);
+    }
+    to {
+      transform: rotateZ(-360deg);
+    }
+  }
+  @keyframes arrowMove1 {
+    from {
+      left: -18%;
+    }
+    to {
+      left: -16%;
+    }
+  }
+  @keyframes arrowMove2 {
+    from {
+      left: 13%;
+    }
+    to {
+      left: 15%;
+    }
+  }
+  @keyframes singleArrowMove1 {
+    from {
+      left: 3.55rem;
+      top: 2.55rem;
+    }
+    to {
+      left: 3.75rem;
+      top: 2.75rem;
+    }
+  }
+  @keyframes singleArrowMove2 {
+    from {
+      left: 5.8rem;
+      top: 2.6rem;
+    }
+    to {
+      left: 5.7rem;
+      top: 2.8rem;
+    }
+  }
+  @keyframes singleArrowMove3 {
+    from {
+      left: 7.6rem;
+      top: 2.6rem;
+    }
+    to {
+      left: 7.8rem;
+      top: 2.8rem;
+    }
+  }
+</style>
+
+
+<body>
+
+  <div class="box">
+    <div class="box-left">
+      <div class="item_header">
+        <div class="item_header_left">
+          <div class="item_header_img">
+            <img src="./images/header_icon.png" alt="">
+          </div>
+          <div class="item_header_ctext">攻击源IP排行</div>
+        </div>
+      </div>
+      <div class="swiper-box">
+        <div class="swiper-container swiper-box-inner" id="swiper-box">
+          <div class="swiper-wrapper">
+            <div class="swiper-slide slider">
+              <div class="slider-content">
+                <div class="slider-content-item slider-content-index">01</div>
+                <div class="slider-content-item slider-content-title">wwww.baidu.com</div>
+                <div class="slider-content-item slider-content-number">8762312</div>
+              </div>
+            </div>
+            <div class="swiper-slide slider">
+              <div class="slider-content">
+                <div class="slider-content-item slider-content-index">02</div>
+                <div class="slider-content-item slider-content-title">wwww.baidu.com</div>
+                <div class="slider-content-item slider-content-number">8762312</div>
+              </div>
+            </div>
+            <div class="swiper-slide slider">
+              <div class="slider-content">
+                <div class="slider-content-item slider-content-index">03</div>
+                <div class="slider-content-item slider-content-title">wwww.baidu.com</div>
+                <div class="slider-content-item slider-content-number">8762312</div>
+              </div>
+            </div>
+            <div class="swiper-slide slider">
+              <div class="slider-content">
+                <div class="slider-content-item slider-content-index">04</div>
+                <div class="slider-content-item slider-content-title">wwww.baidu.com</div>
+                <div class="slider-content-item slider-content-number">8762312</div>
+              </div>
+            </div>
+            <div class="swiper-slide slider">
+              <div class="slider-content">
+                <div class="slider-content-item slider-content-index">05</div>
+                <div class="slider-content-item slider-content-title">wwww.baidu.com</div>
+                <div class="slider-content-item slider-content-number">8762312</div>
+              </div>
+            </div>
+            <div class="swiper-slide slider">
+              <div class="slider-content">
+                <div class="slider-content-item slider-content-index">06</div>
+                <div class="slider-content-item slider-content-title">wwww.baidu.com</div>
+                <div class="slider-content-item slider-content-number">8762312</div>
+              </div>
+            </div>
+            <div class="swiper-slide slider">
+              <div class="slider-content">
+                <div class="slider-content-item slider-content-index">07</div>
+                <div class="slider-content-item slider-content-title">wwww.baidu.com</div>
+                <div class="slider-content-item slider-content-number">8762312</div>
+              </div>
+            </div>
+            <div class="swiper-slide slider">
+              <div class="slider-content">
+                <div class="slider-content-item slider-content-index">08</div>
+                <div class="slider-content-item slider-content-title">wwww.baidu.com</div>
+                <div class="slider-content-item slider-content-number">8762312</div>
+              </div>
+            </div>
+            <div class="swiper-slide slider">
+              <div class="slider-content">
+                <div class="slider-content-item slider-content-index">09</div>
+                <div class="slider-content-item slider-content-title">wwww.baidu.com</div>
+                <div class="slider-content-item slider-content-number">8762312</div>
+              </div>
+            </div>
+            <div class="swiper-slide slider">
+              <div class="slider-content">
+                <div class="slider-content-item slider-content-index">10</div>
+                <div class="slider-content-item slider-content-title">wwww.baidu.com</div>
+                <div class="slider-content-item slider-content-number">8762312</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="active-border-box"></div>
+      </div>
+    </div>
+
+    <div class="info-box">
+      <div class="rotate-box">
+        <div class="rotate-box-outer">
+          <div class="rotate-box-outer-top"></div>
+          <div class="rotate-box-outer-bottom"></div>
+        </div>
+        <div class="rotate-box-inner"></div>
+        <div class="rotate-box-info">
+          <div class="rotate-box-info-number">25%</div>
+          <div class="rotate-box-info-title">依存度</div>
+        </div>
+      </div>
+      <div class="arrow-item double-arrow-left"></div>
+      <div class="arrow-item double-arrow-right"></div>
+      <div class="info-item info-item1 active-info"></div>
+      <div class="info-item info-item2"></div>
+      <div class="info-item info-item3"></div>
+      <div class="info-item info-item4"></div>
+      <div class="single-arrow single-arrow1"></div>
+      <div class="single-arrow single-arrow2"></div>
+      <div class="single-arrow single-arrow3"></div>
+    </div>
+  </div>
+</body>
+<script src="./js/jquery.js"></script>
+<script src="./js/swiper/js/swiper.jquery.min.js"></script>
+<script type="text/javascript">
+  var mySwiper = new Swiper('#swiper-box', {
+    direction: 'vertical',
+    loop: true,
+    autoplay: 8 * 1000,
+    slidesPerView: 5,
+    spaceBetween: 0,
+    centeredSlides: true,
+    keyboardControl: true,
+    onSlideChangeStart: (swiper) => {
+      const $activeBorder = $('.active-border-box').find('.active-border')
+      if ($activeBorder.length > 0) {
+        $activeBorder.remove()
+      }
+    },
+    onSlideChangeEnd: (swiper) => {
+      var activeBorder = `<div class="active-border">
+        <div class="active-border-left"></div>
+        <div class="active-border-right"></div>
+      </div>`
+      $('.active-border-box').append(activeBorder)
+      $('.active-border').show().css({
+        width: '100%',
+      })
+    }
+  })
+  var indexNum = 2;
+  if(timer) {
+    clearInterval(timer)
+  }
+  var timer = setInterval(() => {
+    if(indexNum > 4) {
+      indexNum = 1
+    }
+    $('.info-item').removeClass('active-info')
+    $('.info-item' + indexNum).addClass('active-info')
+    indexNum ++ 
+  },3000)
+</script>
+<script>
+    (function (global) {
+      global.scalePage = {
+        init() {
+          window.onresize = () => {
+            this.scalePage()
+          }
+          this.scalePage()
+        },
+        scalePage() {
+          const oHtml = document.getElementsByTagName('html')[0],
+            htmlW = oHtml.clientWidth
+          oHtml.style.fontSize = htmlW / 1920 * 100 + 'px'
+        }
+      }
+      global.scalePage.init();
+    })(window)
+
+</script>
+
+</html>
