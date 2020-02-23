@@ -10,30 +10,36 @@
       padding: 0;
       margin: 0;
     }
-    body {
-      padding: 10px;
+    html, body {
+      height: 100%;
+      width: 100%;
+      /* background: # */
     }
     .list {
       display: flex;
       flex-direction: column;
       list-style: none;
+      background: #515a6e;
+      height: 100%;
+      width: 200px;
+      padding: 10px;
     }
     .link-item {
-      height: 40px;
-      width: 120px;
-      border: 1px solid #000;
+      height: 60px;
+      width: 100%;
+      /* border: 1px solid #000; */
       border-bottom: none; 
       display: flex;
       justify-content: center;
       align-items: center;
       text-decoration: none;
-      color: #333;
+      color: #fff;
       cursor: pointer;
       text-decoration: underline;
     }
-    .link-item:last-of-type{
+    /* .link-item:last-of-type{
       border-bottom: 1px solid #000;
-    }
+    } */
     .link-item:hover {
       background: #b3ddf1;
       color: #2d8cf0;
@@ -47,6 +53,7 @@
     <li class="link-item" hrefLink="https://ganzhengcan.github.io/myDemo/points.html">粒子系统</li>
     <li class="link-item" hrefLink="https://ganzhengcan.github.io/myDemo/sphere.html">原子模型</li>
     <li class="link-item" hrefLink="https://ganzhengcan.github.io/myDemo/3dMap.html">3D地图</li>
+    <li class="link-item" hrefLink="https://ganzhengcan.github.io/myDemo/streeView.html">3D街景</li>
     <li class="link-item" hrefLink="https://ganzhengcan.github.io/myDemo/swiper.html">轮播</li>
     <li class="link-item" hrefLink="https://ganzhengcan.github.io/myDemo/rotate.html">3D旋转</li>
   </ul>
